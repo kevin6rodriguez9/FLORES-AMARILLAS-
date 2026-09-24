@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Flores amarillas para ti</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="day">
+
+  <!-- Definiciones SVG (el girasol se genera desde script.js) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="defs"></defs></svg>
+
+  <!-- ESCENA: cielo, astros, nubes y campo -->
+  <div class="scene" aria-hidden="true">
+    <div class="sky sky-day"></div>
+    <div class="sky sky-night"></div>
+    <div class="sun"></div>
+    <div class="moon"></div>
+    <div class="stars" id="stars"></div>
+    <div class="clouds">
+      <i class="cloud" style="--w:220px;--y:12%;--t:110s;--dl:-30s"></i>
+      <i class="cloud" style="--w:150px;--y:24%;--t:150s;--dl:-90s"></i>
+      <i class="cloud" style="--w:260px;--y:6%;--t:190s;--dl:-140s"></i>
+    </div>
+    <div class="world" id="world">
+      <div class="ground ground-day"></div>
+      <div class="ground ground-night"></div>
+      <div class="layer far" id="far"></div>
+      <div class="layer mid" id="mid"></div>
+      <div class="layer near" id="near"></div>
+    </div>
+    <div class="tint"></div>
+  </div>
+
+  <!-- Pétalos (ambiente + lluvia) -->
+  <div class="petals" id="petals" aria-hidden="true"></div>
+
+  <!-- Contenido principal -->
+  <main class="stage">
+    <h1 class="title" id="title">Flores amarillas<br><em>para ti</em></h1>
+    <div class="bouquet" id="bouquet" aria-hidden="true"></div>
+    <div class="cards" id="cards"></div>
+  </main>
+
+  <button class="replay" id="replay" type="button">🌻 Ver de nuevo</button>
+
+  <!-- Modal -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+      <button class="close" id="mClose" type="button" aria-label="Cerrar">✕</button>
+      <div class="m-emoji" id="mEmoji"></div>
+      <h2 id="mTitle"></h2>
+      <p id="mText"></p>
+      <p class="sign" id="mSign"></p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+/* ==========================================================
+   Flores amarillas — estilos
+   Índice: 1 Base · 2 Cielo/astros · 3 Campo y cámara · 4 Ramo
+           5 Pétalos · 6 Título y tarjetas · 7 Modal · 8 Extras
+   ========================================================== */
+
+/* ---------- 1. BASE ---------- */
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+body{
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+  --walk:9s;                       /* duración del avance de cámara */
+  --ink:#4a2f0a; --glass:rgba(255,255,255,.5); --glass-b:rgba(255,255,255,.75);
+  --cloud:rgba(255,255,255,.9);
+  color:var(--ink);
+}
+body.night{
+  --ink:#fff6d6; --glass:rgba(22,34,100,.45); --glass-b:rgba(255,224,102,.35);
+  --cloud:rgba(30,42,110,.55);
+}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid #ffd23a;outline-offset:3px}
+
+/* ---------- 2. CIELO, SOL, LUNA, ESTRELLAS, NUBES ---------- */
+.scene,.sky,.world,.tint{position:absolute;inset:0}
+.scene{overflow:hidden;background:#0a1240}
+.sky{transition:opacity 2.5s ease}
+.sky-day{background:linear-gradient(#4fb0ff 0%,#a9dcff 50%,#fff2bf 78%)}
+.sky-night{background:linear-gradient(#040923 0%,#0c1a66 55%,#3550c8 80%)}
+body.night .sky-day,body.day .sky-night{opacity:0}
+
+.sun,.moon{position:absolute;border-radius:50%;transition:opacity 2.5s ease,transform 2.5s ease}
+.sun{
+  top:9%;right:16%;width:clamp(70px,11vmin,120px);aspect-ratio:1;
+  background:radial-gradient(circle,#fffbe0 0 45%,#ffe27a 70%,#ffc93a 100%);
+  box-shadow:0 0 60px 30px rgba(255,220,100,.6),0 0 200px 90px rgba(255,200,80,.35);
+}
+.moon{
+  top:9%;left:16%;width:clamp(60px,9vmin,100px);aspect-ratio:1;
+  background:
+    radial-gradient(circle at 30% 35%,#d6d6c6 0 9%,transparent 10%),
+    radial-gradient(circle at 62% 60%,#cfcfbf 0 12%,transparent 13%),
+    radial-gradient(circle at 70% 25%,#dcdccd 0 6%,transparent 7%),
+    radial-gradient(circle at 40% 40%,#fffff2,#ecebd6);
+  box-shadow:0 0 40px 14px rgba(230,235,255,.55),0 0 160px 60px rgba(120,150,255,.35);
+}
+body.day .sun,body.night .moon{opacity:1;transform:none}
+body.day .moon{opacity:0;transform:translateY(-60px)}
+body.night .sun{opacity:0;transform:translateY(60px)}
+
+.stars{position:absolute;inset:0 0 40%;transition:opacity 2.5s}
+body.day .stars{opacity:0}
+.stars i{position:absolute;width:var(--s);height:var(--s);border-radius:50%;background:#fff;
+  box-shadow:0 0 6px #fff;animation:twinkle var(--t) ease-in-out var(--dl) infinite}
+@keyframes twinkle{0%,100%{opacity:.25}50%{opacity:1}}
+
+.clouds{position:absolute;inset:0 0 45%}
+.cloud{position:absolute;top:var(--y);left:0;width:var(--w);height:calc(var(--w)*.26);
+  border-radius:99px;background:var(--cloud);filter:blur(3px);
+  transition:background 2.5s;animation:drift var(--t) linear var(--dl) infinite}
+.cloud::before,.cloud::after{content:"";position:absolute;background:inherit;border-radius:50%}
+.cloud::before{width:42%;height:170%;left:14%;top:-75%}
+.cloud::after{width:34%;height:135%;left:50%;top:-45%}
+@keyframes drift{from{transform:translateX(-40vw)}to{transform:translateX(120vw)}}
+
+/* ---------- 3. CAMPO Y CÁMARA (parallax) ---------- */
+.ground{position:absolute;left:-10%;right:-10%;bottom:-5%;height:48%;
+  border-radius:50% 50% 0 0/30% 30% 0 0;transition:opacity 2.5s;transform-origin:50% 0}
+.ground-day{background:linear-gradient(#a6dc3f,#5da62c 45%,#2f7a22)}
+.ground-night{background:linear-gradient(#123a5c,#0b2745 45%,#061529)}
+body.night .ground-day,body.day .ground-night{opacity:0}
+
+.layer{position:absolute;inset:0;transform-origin:50% 62%;will-change:transform;
+  transition:transform var(--walk) cubic-bezier(.45,.05,.3,1),opacity 2.5s ease}
+.far{filter:blur(1.2px)}
+.near{filter:blur(4px)}                 /* primer plano desenfocado = profundidad */
+
+/* La cámara avanza: cada capa escala distinto (cerca más, lejos menos) */
+.world.walk .ground{transform:scale(1.25);transition:transform var(--walk) cubic-bezier(.45,.05,.3,1)}
+.world.walk .far{transform:scale(1.12) translateY(2%)}
+.world.walk .mid{transform:scale(1.55) translateY(7%)}
+.world.walk .near{transform:scale(2.8) translateY(20%);opacity:0;
+  transition:transform var(--walk) cubic-bezier(.45,.05,.3,1),opacity 2.5s ease 5.5s}
+.world.reset,.world.reset *{transition:none!important}
+
+/* Flor del campo + balanceo con el viento */
+.flower{position:absolute;transform-origin:50% 100%;
+  animation:sway var(--sd) ease-in-out var(--sl) infinite}
+.flower svg{display:block;width:100%;height:100%;overflow:visible}
+@keyframes sway{0%,100%{transform:rotate(calc(var(--a)*-1))}50%{transform:rotate(var(--a))}}
+
+/* Velo de color: azulado de noche */
+.tint{background:rgba(70,90,210,.5);mix-blend-mode:multiply;opacity:0;transition:opacity 2.5s;pointer-events:none}
+body.night .tint{opacity:1}
+
+/* ---------- 4. RAMO ---------- */
+.stage{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:clamp(6px,1.8dvh,18px);padding:16px 16px 64px;pointer-events:none}
+.bouquet{position:relative;height:min(44dvh,440px);aspect-ratio:3/4}
+.bouquet::before{content:"";position:absolute;inset:-15%;border-radius:50%;opacity:0;transition:opacity 2s 1s;
+  background:radial-gradient(circle,rgba(255,225,110,.55),transparent 65%)}
+.bouquet.on::before{opacity:1}
+.bouquet svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 12px 14px rgba(40,30,0,.3))}
+.b-sway{transform-origin:150px 395px;transform-box:view-box;animation:bob 6s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:rotate(-1.2deg)}50%{transform:rotate(1.2deg)}}
+.b-stem{fill:none;stroke:#3f9a2f;stroke-width:5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;
+  transition:stroke-dashoffset 1.6s ease var(--d)}
+.on .b-stem{stroke-dashoffset:0}
+.b-leaf,.b-paper{opacity:0;transform-box:fill-box;transform-origin:50% 100%;transform:scale(.3) translateY(20px);
+  transition:opacity 1s ease var(--d),transform 1.2s cubic-bezier(.2,.9,.3,1.2) var(--d)}
+.on .b-leaf,.on .b-paper{opacity:1;transform:none}
+.b-head{transform-box:fill-box;transform-origin:50% 50%}
+
+/* ---------- 5. PÉTALOS ---------- */
+.petals{position:fixed;inset:0;z-index:5;pointer-events:none;overflow:hidden}
+.petal{position:absolute;top:0;left:var(--x);width:var(--s);height:calc(var(--s)*1.4);opacity:0;
+  background:linear-gradient(135deg,#ffe680,#f6b800);border-radius:65% 0 65% 0;
+  animation:fall var(--d) linear var(--dl) infinite}
+@keyframes fall{
+  0%{transform:translate3d(0,-8vh,0) rotate(0);opacity:0}
+  10%,88%{opacity:.9}
+  100%{transform:translate3d(var(--dx),108vh,0) rotate(var(--r));opacity:0}}
+
+/* ---------- 6. TÍTULO Y TARJETAS ---------- */
+.title{font-family:"Fraunces",Georgia,serif;font-weight:500;text-align:center;line-height:1.1;
+  font-size:clamp(1.9rem,6.5vmin,3.4rem);opacity:0;transform:translateY(-14px);filter:blur(8px);
+  transition:opacity 1.6s,transform 1.6s,filter 1.6s;text-shadow:0 2px 20px rgba(255,255,255,.35)}
+.title em{font-weight:400}
+body.night .title{text-shadow:0 2px 24px rgba(0,10,80,.7)}
+.title.show{opacity:1;transform:none;filter:none}
+
+.cards{display:flex;gap:14px;justify-content:center;width:100%}
+.card{pointer-events:auto;display:flex;align-items:center;gap:12px;text-align:left;
+  padding:14px 22px;min-width:220px;border-radius:22px;border:1px solid var(--glass-b);
+  background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:0 10px 30px rgba(20,20,60,.18);opacity:0;transform:translateY(40px) scale(.94);
+  transition:opacity .9s,transform .9s cubic-bezier(.2,.9,.3,1.1),box-shadow .3s,background .3s}
+.card.show{opacity:1;transform:none}
+.card.show:hover{transform:translateY(-6px) scale(1.03);box-shadow:0 18px 40px rgba(20,20,60,.28)}
+.card.show:active{transform:scale(.96);transition-duration:.12s}
+.card b{display:block;font-family:"Fraunces",Georgia,serif;font-weight:500;font-size:1.15rem}
+.card small{opacity:.75;font-size:.85rem}
+.card .em{font-size:1.9rem}
+
+.replay{position:fixed;z-index:20;bottom:calc(14px + env(safe-area-inset-bottom));left:50%;
+  transform:translate(-50%,10px);padding:8px 18px;border-radius:99px;font-size:.9rem;
+  border:1px solid var(--glass-b);background:var(--glass);backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity 1s,transform 1s}
+.replay.show{opacity:.85;transform:translate(-50%,0);pointer-events:auto}
+.replay.show:hover{opacity:1}
+
+/* ---------- 7. MODAL ---------- */
+.modal{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:20px;
+  background:rgba(10,15,50,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  opacity:0;pointer-events:none;transition:opacity .4s}
+.modal.open{opacity:1;pointer-events:auto}
+.modal-card{position:relative;width:min(440px,100%);padding:34px 28px 28px;text-align:center;
+  border-radius:28px;border:1px solid var(--glass-b);color:var(--ink);
+  background:linear-gradient(160deg,rgba(255,250,225,.92),rgba(255,236,160,.85));
+  box-shadow:0 30px 80px rgba(0,0,40,.45);transform:translateY(30px) scale(.9);
+  transition:transform .55s cubic-bezier(.2,.9,.3,1.2);color:#4a2f0a}
+body.night .modal-card{background:linear-gradient(160deg,rgba(28,42,120,.92),rgba(16,26,84,.92));color:#fff6d6}
+.modal.open .modal-card{transform:none}
+.m-emoji{font-size:2.6rem;margin-bottom:6px}
+.modal-card h2{font-family:"Fraunces",Georgia,serif;font-weight:500;font-size:1.7rem;margin-bottom:12px}
+.modal-card p{line-height:1.65;font-size:1.02rem;white-space:pre-line}
+.sign{margin-top:14px;font-family:"Fraunces",Georgia,serif;font-style:italic}
+.close{position:absolute;top:12px;right:14px;width:36px;height:36px;border-radius:50%;border:0;
+  background:rgba(0,0,0,.08);transition:transform .2s}
+.close:hover{transform:rotate(90deg)}
+
+/* ---------- 8. RESPONSIVE Y ACCESIBILIDAD ---------- */
+@media (max-width:640px){
+  .cards{flex-direction:column;align-items:center;gap:10px}
+  .card{width:min(320px,100%);min-width:0;padding:11px 18px}
+  .sun{right:10%}.moon{left:10%}
+}
+@media (max-height:520px) and (orientation:landscape){
+  .stage{flex-direction:row;flex-wrap:wrap;align-content:center;gap:10px 24px}
+  .title{font-size:1.6rem}.bouquet{height:52dvh}.cards{flex-direction:column;width:auto}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important;transition-delay:0s!important}
+  .petal{display:none}
+  .cloud{animation:none;left:20%}
+}
