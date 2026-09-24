@@ -17,6 +17,9 @@ const CARDS = [
     sign: "— Siempre tuyo" }
 ];
 
+// Dedicatoria que aparece junto con el ramo (edítala aquí)
+const DEDICATION = "Para Danna 🥰";
+
 const MOBILE = matchMedia("(max-width:640px)").matches;
 const REDUCED = matchMedia("(prefers-reduced-motion:reduce)").matches;
 const K = REDUCED ? 0.15 : 1;              // factor de velocidad de la línea de tiempo
@@ -113,6 +116,8 @@ function buildBouquet() {
     </g></g></svg>`;
   root.getBoundingClientRect();               // fuerza reflow para activar transiciones
   root.classList.add("on");
+  $("dedic").textContent = DEDICATION;          // dedicatoria junto al ramo
+  setTimeout(() => $("dedic").classList.add("show"), 900 * K);
 
   // Los girasoles "viajan" desde distintos puntos del campo hasta su lugar
   root.querySelectorAll(".b-head").forEach((h, i) => {
@@ -182,6 +187,7 @@ function resetExperience() {
   closeModal();
   const w = $("world");
   w.classList.add("reset"); w.classList.remove("walk"); w.offsetWidth; w.classList.remove("reset");
+  $("dedic").classList.remove("show");
   $("bouquet").classList.remove("on"); $("bouquet").innerHTML = "";
   $("title").classList.remove("show"); $("replay").classList.remove("show");
   $("cards").querySelectorAll(".card").forEach(c => c.classList.remove("show"));
